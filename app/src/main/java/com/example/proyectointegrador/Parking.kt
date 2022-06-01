@@ -5,6 +5,7 @@ data class Parking(val vehicles: MutableSet<Vehicle>) {
 
     var checkoutControl: Pair<Int, Int> = Pair(0, 0)
 
+    //Shows the checkin for all the vehicles
     init {
         vehicles.toList().forEach{
             val parkingSpace = ParkingSpace(it)
@@ -12,7 +13,7 @@ data class Parking(val vehicles: MutableSet<Vehicle>) {
         }
     }
 
-    //It verifies if the Parking was abled to add the vehicle
+    //Verifies if the Parking was abled to add the vehicle
     fun addVehicle(vehicle: Vehicle): Boolean {
         var wasInserted = false
         val parkingSpace = ParkingSpace(vehicle)
@@ -24,6 +25,7 @@ data class Parking(val vehicles: MutableSet<Vehicle>) {
 
     }
 
+    //Does the checkout of the vehicle only if it's in the parking, if not, it shows an error
     fun removeVehicle(plate: String) {
         val vehicleFound = vehicles.find { it.plate == plate }
         vehicleFound?.let {
@@ -32,10 +34,13 @@ data class Parking(val vehicles: MutableSet<Vehicle>) {
         } ?: println("Sorry, the check-out failed")
     }
 
+    //Prints the total of vehicles that have been checked out and the total earnings that
+    //goes with them
     fun showEarnings() {
         println("${checkoutControl.first} vehicles have checked out and have earnings of ${checkoutControl.second}")
     }
 
+    //Prints the total of vehicles that are parked
     fun listVehicles() {
         val platesList = vehicles.map { it.plate }
         println(platesList)

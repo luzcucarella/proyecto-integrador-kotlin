@@ -11,15 +11,7 @@ data class ParkingSpace(var vehicle: Vehicle) {
     val parkedTime: Long
         get() = ((Calendar.getInstance().timeInMillis) - vehicle.checkInTime.timeInMillis) / MINUTES_IN_MILISECONDS
 
-    /*val parkedTime: Long
-        get() {
-            val cal = Calendar.getInstance()
-            //cal.set(2022, 4, 31, 14, 40, 8)
-            cal.set(Calendar.HOUR, 3) // Pone la hora en 10
-            cal.set(Calendar.AM_PM, Calendar.PM)
-            return (cal.timeInMillis - vehicle.checkInTime.timeInMillis) / MINUTES_IN_MILISECONDS
-        }*/
-        
+    //Shows a warning if the car wasn't added to the parking, or the succes sign if it was
     fun checkin(wasCarInserted: Boolean) {
         if (wasCarInserted) {
             println("Welcome to AlkeParking!")
@@ -28,9 +20,11 @@ data class ParkingSpace(var vehicle: Vehicle) {
         }
     }
 
+    //Call the function that calculates the fee that's associated to the vehicle in case that
+    //it was succesfully checked out
+    // or it calls the error function
     fun checkOutVehicle(plate: String, parking: Parking) {
-        //if (vehicleFound != null) { // vehicles.contains { it.plate == plate }
-        var cost = calculateFee(
+        val cost = calculateFee(
             vehicle.vehicleType,
             parkedTime,
             vehicle.discountCard != null
@@ -42,10 +36,9 @@ data class ParkingSpace(var vehicle: Vehicle) {
             val totalMoneyEarned = parking.checkoutControl.second + cost
             parking.checkoutControl = Pair(vehiclesCheckedOut, totalMoneyEarned)
         } else onError()
-        // println("El valor es: ${cost}")
-        //   }
     }
 
+    //calculates the fee that's associated to the vehicle
     fun calculateFee(vehicleType: VehicleType, parkedTime: Long, hasDiscountCard: Boolean): Int {
         var fee = vehicleType.precio + 5 * ceil(minutesExtra(parkedTime) / 15.0)
         if (hasDiscountCard) {
@@ -55,17 +48,18 @@ data class ParkingSpace(var vehicle: Vehicle) {
     }
 
 
-    // Calculates de amount of extra minutes that the vehicle was parked
+    // Calculates the amount of extra minutes that the vehicle was parked
     // Returns 0 if the vehicle was parked less than 2hs
     fun minutesExtra(parkedTime: Long): Double {
         return maxOf((parkedTime - 120).toDouble(), 0.0)
     }
 
-    // vehicles[plate]
+    //It shows the cost of the parked time, and a come back sign
     fun onSuccess(cost: Int) {
         println("Your fee is ${cost}. Come back soon.")
     }
 
+    //It shows a warning when the checkout failed
     fun onError() {
         println("Sorry, the check-out failed")
     }
